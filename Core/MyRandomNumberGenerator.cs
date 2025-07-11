@@ -5,38 +5,21 @@ namespace Core;
 
 public class MyRandomNumberGenerator(RandomNumberGenerator rng)
 {
-    public BigInteger GenerateOddNumberWithMsbSetToOne(int numberOfBytes)
+    public BigInteger GenerateProbablyPrimeNumber(int numberOfBytes, int numberOfTry,
+        IGenerateRandomOddNumber oddGenerator, IGenerateRandomOddNumber numberGenerator)
     {
-        var randomBytes = new byte[numberOfBytes];
-        rng.GetBytes(randomBytes);
-        randomBytes[numberOfBytes - 1] |= 0x80;
-        randomBytes[0] |= 0x01;
-
-        return new BigInteger(randomBytes, true);
-    }
-
-    public BigInteger GenerateNumberWithMsbSetToZero(int numberOfBytes)
-    {
-        var randomBytes = new byte[numberOfBytes];
-        rng.GetBytes(randomBytes);
-        randomBytes[numberOfBytes - 1] &= 0x7F;
-
-        return new BigInteger(randomBytes, true);
-    }
-
-    public BigInteger GenerateProbablyPrimeNumber(int numberOfBytes, int numberOfTry)
-    {
-        var n = GenerateOddNumberWithMsbSetToOne(numberOfBytes);
-        while (!MillerRabinTestWithWitness(n, numberOfTry)) n = GenerateOddNumberWithMsbSetToOne(numberOfBytes);
+        var n = oddGenerator.GenerateOddNumber(numberOfBytes, rng);
+        while (!MillerRabinTestWithWitness(n, numberOfTry, numberGenerator))
+            n = oddGenerator.GenerateOddNumber(numberOfBytes, rng);
 
         return n;
     }
 
-    public bool MillerRabinTestWithWitness(BigInteger n, int numberOfTry)
+    public bool MillerRabinTestWithWitness(BigInteger n, int numberOfTry, IGenerateRandomOddNumber numberGenerator)
     {
         var count = 0;
         while (count < numberOfTry)
-            if (MillerRabinTest(n))
+            if (MillerRabinTest(n, numberGenerator))
                 count++;
             else
                 return false;
@@ -44,9 +27,9 @@ public class MyRandomNumberGenerator(RandomNumberGenerator rng)
         return true;
     }
 
-    public bool MillerRabinTest(BigInteger n)
+    public bool MillerRabinTest(BigInteger n, IGenerateRandomOddNumber generator)
     {
-        var a = GenerateNumberWithMsbSetToZero(n.GetByteCount(true));
+        var a = generator.GenerateOddNumber(n.GetByteCount(true), rng);
         var d = n - 1;
         var s = 0;
 

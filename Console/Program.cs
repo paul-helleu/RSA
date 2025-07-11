@@ -7,13 +7,15 @@ using Core;
 var myRng = new MyRandomNumberGenerator(RandomNumberGenerator.Create());
 
 var stopwatch = Stopwatch.StartNew();
-var p = myRng.GenerateProbablyPrimeNumber(8, 10);
+var p = myRng.GenerateProbablyPrimeNumber(8, 10, new RandomNumberGeneratorWithMsbSetToOne(),
+    new RandomNumberGeneratorWithMsbSetToZero());
 stopwatch.Stop();
 
 Console.WriteLine($"p: {p} is probably prime, generated in {stopwatch.ElapsedTicks} ticks!");
 
 stopwatch.Restart();
-var q = myRng.GenerateProbablyPrimeNumber(8, 10);
+var q = myRng.GenerateProbablyPrimeNumber(8, 10, new RandomNumberGeneratorWithMsbSetToOne(),
+    new RandomNumberGeneratorWithMsbSetToZero());
 stopwatch.Stop();
 
 Console.WriteLine($"q: {q} is probably prime, generated in {stopwatch.ElapsedTicks} ticks!");

@@ -6,6 +6,9 @@ namespace Test;
 
 public class MyRandomNumberGeneratorTest
 {
+    private readonly IGenerateRandomOddNumber _msbOddGenerator = new RandomNumberGeneratorWithMsbSetToOne();
+    private readonly IGenerateRandomOddNumber _oddGenerator = new RandomNumberGeneratorWithMsbSetToZero();
+
     [Theory]
     [InlineData(1)]
     [InlineData(2)]
@@ -16,7 +19,7 @@ public class MyRandomNumberGeneratorTest
     {
         var myRng = new MyRandomNumberGenerator(RandomNumberGenerator.Create());
 
-        var p = myRng.GenerateProbablyPrimeNumber(numberOfBytes, 5);
+        var p = myRng.GenerateProbablyPrimeNumber(numberOfBytes, 5, _msbOddGenerator, _oddGenerator);
 
         Assert.Equal(1, p % 2);
     }
@@ -31,7 +34,7 @@ public class MyRandomNumberGeneratorTest
     {
         var myRng = new MyRandomNumberGenerator(RandomNumberGenerator.Create());
 
-        var p = myRng.GenerateProbablyPrimeNumber(numberOfBytes, 5);
+        var p = myRng.GenerateProbablyPrimeNumber(numberOfBytes, 5, _msbOddGenerator, _oddGenerator);
 
         Assert.True(p > BigInteger.Pow(2, numberOfBytes * 8 - 1));
     }
@@ -46,7 +49,7 @@ public class MyRandomNumberGeneratorTest
     {
         var myRng = new MyRandomNumberGenerator(RandomNumberGenerator.Create());
 
-        var isPrime = myRng.MillerRabinTestWithWitness(number, 1_000);
+        var isPrime = myRng.MillerRabinTestWithWitness(number, 1_000, _oddGenerator);
 
         Assert.False(isPrime);
     }
