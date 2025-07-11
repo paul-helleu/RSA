@@ -4,7 +4,7 @@ using Core;
 
 namespace Test;
 
-public class MyRandomNumberGeneratorWithMsbSetToOneTest
+public class MyRandomNumberGeneratorTest
 {
     [Theory]
     [InlineData(1)]
